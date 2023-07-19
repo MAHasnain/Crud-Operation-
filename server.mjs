@@ -3,7 +3,7 @@ import {nanoid} from "nanoid";
 
 
 const app = express();
-app.use (express.json());
+app.use (express.json());   /// data kio json me convert krta h
 
 // app.get ('/', (req, res) => {
 //   res.send('M.A.H');
@@ -12,10 +12,15 @@ app.use (express.json());
 
 let products =[
   {
-    id : nanoid(),
+    id : nanoid(),     /// random id  dene k liye
     name : "abc product",
     price : "123$",
     description : "abc product description"
+  },
+  {
+    id : nanoid(),
+    name : "macbook air",
+    price : "324$"
   }
 ]
 app.get ('/products', (req, res)=> {
@@ -61,8 +66,13 @@ app.post('/product', (req, res) => {
       name : "abc product",
       price : "123$",
       description : "abc product description"
-    }`)
+    }`);
+    return;
   }
+
+  // console.log(testing);
+  // res.send ("validation pass")
+  // return;
 
   products.push({
     id : nanoid(),
@@ -153,3 +163,4 @@ app.listen(port, ()=> {
 
 
 
+// console.log("testing nanoid" + " " + nanoid());
