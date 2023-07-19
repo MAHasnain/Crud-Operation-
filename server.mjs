@@ -28,12 +28,12 @@ app.get ('/products', (req, res)=> {
 app.get('/product/:id', (req, res)=> {
   console.log(typeof req.params.id)
 
-  if (isNaN(req.params.id)) {                      /// validation
+  if (isNaN(req.params.id)) {                      /// for validation
     res.status(403).send("invalid product id")    
   }
 
   let isFound = false;
-  for (let i = 0; i < products.length; i++) {
+  for (let i = 0; i < products.length; i++) {         //// i = index ( array me product ka number ) 
     if (products[i].id === req.params.id) {
       isFound = i;
       break;
