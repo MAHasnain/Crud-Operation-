@@ -1,6 +1,14 @@
 import express from 'express';
-import {nanoid} from "nanoid";
+import {customAlphabet} from "nanoid";
+const nanoid = customAlphabet ('1234567890', 20);
+import { MongoClient } from 'mongodb';
+import './.config/index.mjs';
 
+
+const mongodbURI = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}}@cluster0.hq0rben.mongodb.net/?retryWrites=true&w=majority`
+const client = new MongoClient (mongodbURI);
+const database = client.db('ecom');
+const productsCollection = database.collection("products");
 
 const app = express();
 app.use (express.json());   /// data kio json me convert krta h
@@ -10,25 +18,14 @@ app.use (express.json());   /// data kio json me convert krta h
 // });
 
 
-let products =[
-  {
-    id : nanoid(),     /// random id  dene k liye
-    name : "abc product",
-    price : "123$",
-    description : "abc product description"
-  },
-  {
-    id : nanoid(),
-    name : "macbook air",
-    price : "324$"
-  }
-]
+let products=[];
+
 app.get ('/products', (req, res)=> {
   res.send({
    message: "all products",
    data: products
-  });
-})
+  })
+});
 
 app.get('/product/:id', (req, res)=> {
   console.log(typeof req.params.id)

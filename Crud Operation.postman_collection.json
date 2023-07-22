@@ -41,13 +41,45 @@
 					"response": []
 				},
 				{
+					"name": "http://127.0.0.1:3000/product/:id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/product/97038242918001158062",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"product",
+								"97038242918001158062"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "http://localhost:3000/products",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\" : \"think and grow rich\",\r\n    \"price\" : \"500 rupees\",\r\n    \"description\" : \"nepolean hill is the book of author\" \r\n}\r\n",
+							"raw": "{\r\n    \"name\" : \"Samsung\",\r\n    \"price\" : \"20,000 rupees\",\r\n    \"description\" : \"Samsung has no competition\" \r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -83,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"ball\",\r\n    \"price\": \"20$\",\r\n    \"description\": \"football\"\r\n}",
+							"raw": "{\r\n    \"name\": \"think and grow rich\",\r\n    \"price\": \"500 rupees\",\r\n    \"description\": \"nepolean hill is the book (think and grow rich) of author\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -104,7 +136,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "WVH3fFlj9sOJtE3DH-NbJ"
+									"value": "97038242918001158062"
 								}
 							]
 						}
@@ -126,7 +158,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/product/cnTv-dFyY105HUisc4G7u",
+							"raw": "http://localhost:3000/product/90782065472303490531",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -134,7 +166,7 @@
 							"port": "3000",
 							"path": [
 								"product",
-								"cnTv-dFyY105HUisc4G7u"
+								"90782065472303490531"
 							]
 						}
 					},
