@@ -1,163 +1,203 @@
-import express from 'express';
-import {customAlphabet} from "nanoid";
-const nanoid = customAlphabet ('1234567890', 20);
-import { MongoClient } from 'mongodb';
-import './.config/index.mjs';
+import express from "express";
+import { customAlphabet } from "nanoid";
+const nanoid = customAlphabet("1234567890", 20);
+import { MongoClient, ObjectId } from "mongodb";
+import dotenv from "dotenv";
+dotenv.config();
+console.log(process.env.MONGODB_USERNAME);
 
-
-const mongodbURI = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}}@cluster0.hq0rben.mongodb.net/?retryWrites=true&w=majority`
-const client = new MongoClient (mongodbURI);
-const database = client.db('ecom');
+const mongodbURI = `mongodb+srv://attaulhasnain:Hasnain1881@cluster0.j7fos14.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(mongodbURI);
+const database = client.db("ecom");
 const productsCollection = database.collection("products");
 
 const app = express();
-app.use (express.json());   /// data kio json me convert krta h
+app.use(express.json()); /// data ko json me convert krta h
 
-// app.get ('/', (req, res) => {
-//   res.send('M.A.H');
+// let products=[];
+
+app.get("/products", async (req, res) => {
+ const cur = productsCollection.find({});
+ const allvalues = await cur.toArray(); /// keyword "find" in mongo db docs
+ res.send({
+  message: "all products",
+  data: allvalues,
+ });
+});
+
+app.get("/product/:id", async (req, res) => {
+ const cur = await productsCollection.findOne({
+  _id: new ObjectId(req.params.id),
+ });
+ res.send({
+  message: "product found with id",
+  data: cur,
+ });
+});
+//console.log(typeof req.params.id)
+
+// if (isNaN(req.params.id)) {                      /// for validation
+//   res.status(403).send("invalid product id")
+// }
+
+// let isFound = false;
+// for (let i = 0; i < products.length; i++) {         //// i = index ( array me product ka number )
+//   if (products[i].id === req.params.id) {
+//     isFound = i;
+//     break;
+//   }
+// }
+
+//   if (isFound === false) {
+//     res.status(404);
+//     res.send({
+//       message: "product not found"
+//     })
+//   } else {
+//     res.send({
+//       message: "product found with id: " + products [isFound].id,
+//       data: products[isFound]
+//     });
+//   }
 // });
 
+////  post request ////
 
-let products=[];
-
-app.get ('/products', (req, res)=> {
-  res.send({
-   message: "all products",
-   data: products
-  })
-});
-
-app.get('/product/:id', (req, res)=> {
-  console.log(typeof req.params.id)
-
-  if (isNaN(req.params.id)) {                      /// for validation
-    res.status(403).send("invalid product id")    
-  }
-
-  let isFound = false;
-  for (let i = 0; i < products.length; i++) {         //// i = index ( array me product ka number ) 
-    if (products[i].id === req.params.id) {
-      isFound = i;
-      break;
-    }
-  }
-
-  if (isFound === false) {
-    res.status(404);
-    res.send({
-      message: "product not found"
-    })
-  } else {
-    res.send({
-      message: "product found with id: " + products [isFound].id,
-      data: products[isFound]
-    });
-  }
-});
-
-          ////  post request ////
-        
-app.post('/product', (req, res) => {
-  if (!req.body.name || !req.body.price || !req.body.description) {
-    res.status(403).send (`required parameter missing. example JSON request body : {
+app.post("/product", async (req, res) => {
+ if (!req.body.name || !req.body.price || !req.body.description) {
+  res.status(403)
+   .send(`required parameter missing. example JSON request body : {
       name : "abc product",
       price : "123$",
       description : "abc product description"
     }`);
-    return;
-  }
+  return;
+ }
 
-  // console.log(testing);
-  // res.send ("validation pass")
-  // return;
+ const { name } = req.body.name;
+ const { price } = req.body.price;
+ const { description } = req.body.description;
 
-  products.push({
-    id : nanoid(),
-    name : req.body.name,
-    price : req.body.price,
-    description : req.body.description
+ // console.log(testing);
+ // res.send ("validation pass")
+ // return;
+
+ // products.push({
+ //   id : nanoid(),
+ //   name : req.body.name,
+ //   price : req.body.price,
+ //   description : req.body.description
+ // })
+
+ await productsCollection
+  .insertOne({
+   name: req.body.name,
+   price: req.body.price,
+   description: req.body.description,
   })
-  res.status(201).send({ message : "created product" });
+  .then(() => {
+   res.status(201).send({ message: "created product" });
+  })
+  .catch(() => {
+   res.status(500).send({
+    message: "internal server error",
+   });
+  });
 });
 
-          ////  put request ////
+////  put request ////
 
-app.put('/product/:id', (req, res) => {
+app.put("/product/:id", async (req, res) => {
+ if (!req.body.name && !req.body.price && !req.body.description) {
+  res.status(403).send(`required parameter missing. 
+      atleast one parameter is required: name, price or description to complete update 
+      example JSON request body
+      {
+        name : "abc product",
+        price : "123$",
+        description : "abc product description"
+      }`);
+  return;
+ }
 
-  if (!req.body.name && !req.body.price && !req.body.description) {
+ //  const { name } = req.body.name;
+ //  const { price } = req.body.price;
+ //  const { description } = req.body.description;
 
-    res.status(403).send(`required parameter missing. 
-    atleast one parameter is required: name, price or description to complete update 
-    example JSON request body
-    {
-      name : "abc product",
-      price : "123$",
-      description : "abc product description"
-    }`);  
-  }
+ // let isFound = false;
 
-  let isFound = false;
+ // for (let i = 0; i < products.length; i++) {
+ //   if (products[i].id === req.params.id) {
+ //     isFound = i;
+ //     break;
+ //   }
+ // }
 
-  for (let i = 0; i < products.length; i++) {
-    if (products[i].id === req.params.id) {
-      isFound = i;
-      break;
-    }
-  }
+ // if (isFound === false) {
+ //   res.status(404);
+ //   res.send({
+ //     message : "product not found",
 
-  if (isFound === false) {
-    res.status(404);
-    res.send({
-      message : "product not found",
+ //   });
+ // } else {
 
-    });    
-  } else {
-    
-    if (req.body.name) products[isFound].name = req.body.name
-    if (req.body.price) products[isFound].price = req.body.price
-    if (req.body.description) products[isFound].description = req.body.description
+ //   if (req.body.name) products[isFound].name = req.body.name
+ //   if (req.body.price) products[isFound].price = req.body.price
+ //   if (req.body.description) products[isFound].description = req.body.description
 
-    res.send({
-      message : "product is updated with id:" + products[isFound].id,
-      data : products[isFound]
-    })
-  }
+ await productsCollection
+  .updateOne(
+   { _id: new ObjectId(req.params.id) },
+   {
+    $set: {
+     name: req.body.name,
+     price: req.body.price,
+     description: req.body.description,
+    },
+   }
+  )
+  .then(() => {
+   res.send({ message: "product is updated:" });
+  })
+  .catch(() => {
+   res.status(500).send({
+    message: "internal server error",
+   });
+  });
 });
 
-          ////  delete request ////
+////  delete request ////
 
-app.delete('/product/:id', (req, res) => {
+app.delete("/product/:id", async (req, res) => {
 
-  let isFound = false
+ //  let isFound = false;
 
-  for (let i = 0; i < products.length; i++) {
-    if (products[i].id === req.params.id) {
-      isFound = i;
-      break;
-    }
-  }
-
-  if (isFound === false) {
-    res.status(404)
-    res.send({
-      message : "product not found"
-    });
-  } else {
-    products.splice(isFound, 1)
-
-    res.send({
-      message: "products is deleted" 
-    })
-  }
+ //  for (let i = 0; i < products.length; i++) {
+ //   if (products[i].id === req.params.id) {
+ //    isFound = i;
+ //    break;
+ //   }
+ //  }
+ await productsCollection.deleteOne({ _id: new ObjectId(req.params.id) 
+  }).then(() => {
+   res.send({
+    message: "product is deleted",
+   });
+   res.status(404);
+  }).catch(() => {
+   res.send({
+    message: "product not found",
+   });
+  });
 });
-
-
+//  if (isFound === false) {
+//  } else {
+//   products.splice(isFound, 1);
+// }
 
 const port = process.env.port || 3000;
-app.listen(port, ()=> {
-  console.log(`Example app listening on port ${port}`);
+app.listen(port, () => {
+ console.log(`Example app listening on port ${port}`);
 });
-
-
 
 // console.log("testing nanoid" + " " + nanoid());
