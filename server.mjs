@@ -16,7 +16,7 @@ app.use(express.json()); /// data ko json me convert krta h
 
 // let products=[];
 
-app.get("/products", async (req, res) => {
+app.get("/checkAllProducts", async (req, res) => {
  const cur = productsCollection.find({});
  const allvalues = await cur.toArray(); /// keyword "find" in mongo db docs
  res.send({
@@ -63,7 +63,7 @@ app.get("/product/:id", async (req, res) => {
 
 ////  post request ////
 
-app.post("/product", async (req, res) => {
+app.post("/", async (req, res) => {
  if (!req.body.name || !req.body.price || !req.body.description) {
   res.status(403)
    .send(`required parameter missing. example JSON request body : {
