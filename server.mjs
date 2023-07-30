@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { customAlphabet } from "nanoid";
 const nanoid = customAlphabet("1234567890", 20);
 import { MongoClient, ObjectId } from "mongodb";
@@ -12,8 +13,8 @@ const database = client.db("ecom");
 const productsCollection = database.collection("products");
 
 const app = express();
+app.use(cors());
 app.use(express.json()); /// data ko json me convert krta h
-
 // let products=[];
 
 app.get("/checkAllProducts", async (req, res) => {
